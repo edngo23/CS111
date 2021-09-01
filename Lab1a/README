@@ -1,0 +1,30 @@
+NAME: Ethan Ngo
+EMAIL: ethan.ngo2019@gmail.com
+ID: 205416130
+
+The included files are The included files are lab1a.c, README, and Makefile.
+
+lab1a.c:
+This is the source file, which contains the code for this lab. In short, this code
+exploits OS features, specifically, terminal I/O and modes, polled I/O, 
+inter-process handling, and exception handling.
+
+README:
+This file and its contents.
+
+Makefile:
+This Makefile supports differnt targets: default, clean, and dist. Default is the 
+default setting that is ran if nothing is specified. Clean removes all unnecessary 
+files and returns the current directory to the freshly untared state. Dist is the 
+command to create the tarball for submission and distribution.
+
+Misc:
+This project was tough. I struggled most with not knowing what the output was 
+supposed to be, so I spent days trying to troubleshoot my code that was correct.
+With debugging, it was difficult knowing what happens with the chiid and parent 
+because I would print out messages in each, but I don't think it signified whether
+I was in the parent or the child. 
+
+The discussion slides from the TAs were extremely helpful. Although some of the 
+slides were convoluted and confusing, I adapted much of the pseudocode from the 
+TAs.

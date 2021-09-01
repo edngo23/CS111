@@ -1,0 +1,82 @@
+NAME: Ethan Ngo
+EMAIL: ethan.ngo2019@gmail.com
+ID: 205416130
+
+The included files are lab2_list.c, SortedList.c, SortedList.h, Makefile, README, 
+lab2b_1.png, lab2b_2.png, lab2b_3.png, lab2b_4.png, lab2b_5.png, lab2b_list.csv,
+and lab2b_list.gp.
+
+Files:
+lab2_list.c: A sorted, doubly-linked list threading source code
+SortedList.h: A header file provided by the project specs
+SortedList.c: Implementation of SortedList.h with extra funcitonality
+Makefile: to be detailed later
+README: to be detailed later
+(the following is directly taken from the project specs)
+lab2b_1.png: throughput vs. number of threads for mutex and spin-lock synchronized list operations.
+lab2b_2.png: mean time per mutex wait and mean time per operation for mutex-synchronized list operations.
+lab2b_3.png: successful iterations vs. threads for each synchronization method.
+lab2b_4.png: throughput vs. number of threads for mutex synchronized partitioned lists.
+lab2b_5.png: throughput vs. number of threads for spin-lock-synchronized partitioned lists.
+lab2b_list.csv: containing all of my results for all of tests.
+lab2b_list.gp: data reduction to produce the graphs
+
+
+README:
+This file and its contents.
+
+Makefile:
+This Makefile supports differnt targets: default, tests, graphs, profile, clean, and dist. Default 
+creates an executable for list. Tests runs build and a large amount of commands to test the list program, 
+the output to be used in graphs. Graphs runs a command that uses the csv output of tests and graphs the 
+results using gnuplot. Profile runs commands with gperftools profiling tools that generates an execution 
+profiling report. Clean removes all unnecessary files and returns the current directory to the freshly 
+untared state. Dist is the command to create the tarball for submission and distribution.
+
+Questions:
+    Q2.3.1:
+        Most of the cycles for the 1 and 2-thread list tests are likely spent doing the operations.
+        This is then clearly the most expensive parts because synchronization is much less of an issue
+        with a small number of threads, because locks are more readily available.
+
+        Most of the time for high-thread spin-lock tests are spent spinning, waiting for locks to be
+        unlocked. Most of the time for high-thread mutex tests are spent in the mutex operations, 
+        since they are the most expensive and have a lot of overhead, as threads "compete" to access
+        the same resources.
+
+    Q2.3.2:
+        Most of the cycles in the spin-lock version is spent during the line of code:
+            while(__sync_lock_test_and_set(&lock, 1));
+        This operation becomes so expensive with large numbers of threads because as the number of
+        threads increases, the more competition there is for CPU time, and as a result, to avoid
+        race conditions and to ensure integrity of the code/list, threads spend a large amount of 
+        time waiting for their opportunities.
+
+    Q2.3.3:
+        The average lock-wait time rises so dramatically with the number of contending threads
+        because the more threads there are, the more threads there are competing for resources,
+        causing threads to wait longer.
+
+        Operation completion time is not as affected because there is always at least one thread
+        that is working towards completion at a time, so technically, no time is wasted towards
+        completing the operation.
+
+        Wait time per operation goes up faster than completion time per operation because with
+        multiple threads, they each have their own clock, and at the end are all combined into 
+        one value. This means that times "overlap" in the sense that all the waiting threads
+        are accumulating waiting time at the same time, which adds up over time.
+    
+    Q2.3.4:
+        As the number of lists increases, the efficiency of the program should improve. The
+        throughtput should increase as the number of list increases until there is only one 
+        element in each list, which would be the limit of optimization, because after that,
+        any extra number of lists will be useless. It is somewhat reasonable to suggest that
+        because the graph appears to be decaying, not necessarily at a 1/N rate, but a 
+        perfectly optimized program may be able to achieve such a rate.
+
+Misc:
+https://github.com/gperftools/gperftools
+    - Gperftools documentation
+http://www.cse.yorku.ca/~oz/hash.html
+    - Hashing function example
+

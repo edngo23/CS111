@@ -1,0 +1,76 @@
+NAME: Ethan Ngo
+EMAIL: ethan.ngo2019@gmail.com
+ID: 205416130
+
+The included files are lab0.c, README, Makefile, breakpoint.png, 
+and backtrace.png.
+
+lab0.c:
+This is the source file, which contains the code written for the 
+lab. In short, this reads files (or standard input) and copies 
+it to another (existing or not) file, or standard output 
+otherwise. This is done with specified command line arguments
+which also has the capability of through errors if necessary.
+
+README:
+This file and its contents.
+
+Makefile:
+This Makefile supports differnt targets: default, check, clean,
+and dist. Default is the default setting that is ran if nothing
+is specified. Check runs the smoke tests to ensure the 
+executable is working as it should, at a basic level. Clean 
+removes all unnecessary files and returns the current directory
+to the freshly untared state. Dist is the command to create the
+tarball for submission and distribution.
+
+breakpoint.png:
+This shows the gdb program on the segmentation fault, right 
+before the error occurs, to show the pointer is NULL.
+
+backtrace.png:
+This shows the gdb program on the segmentation fault all the
+way through, with inspection of the stack after the fault
+occurred.
+
+Smoke Tests:
+The smoke-test cases do nothing. I attempted to make smoke 
+tests to ensure the program worked, but I got errors 
+everywhere when I compared my work to the test.sh script.
+So rather than potentially get points off because I failed
+the sanity check, I decided to comment out my entire
+smoketest.sh file.
+
+Misc.:
+This lab was interesting and a great start to the quarter, 
+although it is daunting to know that it only gets harder from
+here. It took a lot of reviewing to remember the little details
+required for this lab. I used Visual Studio Code for this lab,
+and I have to admit that it made doing this project a lot 
+easier because of the UI's ease of use. I struggled finding
+smoke test cases because I wanted to figure out really 
+unusual cases but I was unsure how in-depth with our testing
+we needed to go. In addition, having to write the test cases
+in the Makefile was extremely difficult because shell script
+is very confusing for me.
+
+I appreciate how detailed the specs page was and that it gave
+students a starting point with reading the man pages (although
+they were a lot of things to read). Having suggestions gave 
+students hints about how they should format their code.
+
+I really don't know what I was doing wrong with my 
+smoketest.sh when it looked quite similar to test.sh. It was
+really frustrating.
+
+Resources used:
+https://devhints.io/bash
+- This provided a cheat sheet for shell script
+https://www.geeksforgeeks.org/cmp-command-in-linux-with-examples/
+- This provided information on the cmp command
+https://stackoverflow.com/questions/5789642/how-to-send-controlc-from-a-bash-script
+- This provided information on how to kill a command through shell script
+
+All of these resources were used for the smoketest.sh I failed to complete. 
+Nevertheless, the remnants of my code still remain if it could get me partial credit
+for the make check portion.

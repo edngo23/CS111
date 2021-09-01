@@ -1,0 +1,190 @@
+Total: 248 samples
+     226  91.1%  91.1%      244  98.4% listThreads
+       8   3.2%  94.4%        9   3.6% SortedList_lookup
+       7   2.8%  97.2%        8   3.2% SortedList_insert
+       2   0.8%  98.0%        3   1.2% __random
+       1   0.4%  98.4%        1   0.4% ?? /usr/src/debug/glibc-2.17-c758a686/stdlib/random.c:297
+       1   0.4%  98.8%        1   0.4% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:161
+       1   0.4%  99.2%        1   0.4% ?? /usr/src/debug////////glibc-2.17-c758a686/string/../sysdeps/x86_64/multiarch/strcmp-sse42.S:1734
+       1   0.4%  99.6%        1   0.4% SortedList_delete
+       1   0.4% 100.0%        1   0.4% __random_r
+       0   0.0% 100.0%      244  98.4% ?? /usr/src/debug////////glibc-2.17-c758a686/misc/../sysdeps/unix/sysv/linux/x86_64/clone.S:118
+       0   0.0% 100.0%        4   1.6% __libc_start_main
+       0   0.0% 100.0%        4   1.6% _start
+       0   0.0% 100.0%        4   1.6% main
+       0   0.0% 100.0%        4   1.6% rand_r
+       0   0.0% 100.0%      244  98.4% start_thread
+ROUTINE ====================== listThreads in /u/cs/ugrad/dung/CS111/Lab2b/lab2_list.c
+   226    244 Total samples (flat / cumulative)
+     .      .   47: 
+     .      .   48:     return randNum % listNum;
+     .      .   49: }
+     .      .   50: 
+     .      .   51: void* listThreads(void* input)
+---
+     .      .   52: {
+     .      .   53:     long waitTime = 0;
+     .      .   54:     struct timespec waitStart, waitFinish;
+     .      .   55:     SortedListElement_t* inputElem = input;
+     .      .   56:     int hashVal = 0, len = 0;
+     .      .   57:     if(opt_sync == 'm')
+     .      .   58:     {
+     .      .   59:         clock_gettime(CLOCK_MONOTONIC, &waitStart);
+     .      .   60:         pthread_mutex_lock(&mutexThrd);
+     .      .   61:         clock_gettime(CLOCK_MONOTONIC, &waitFinish);
+     .      .   62:         waitTime += NANOSEC * (waitFinish.tv_sec - waitStart.tv_sec) + (waitFinish.tv_nsec - waitStart.tv_nsec);
+     .      .   63:     }
+     .      .   64:     else if(opt_sync == 's')
+   226    226   65:         while(__sync_lock_test_and_set(&lock, 1));
+     .      .   66: 
+     .      .   67:     int i;
+     .      .   68:     
+     .      .   69:     if(printing) printf("LIST: starting insert\n");
+     .      .   70:     for(i = 0; i < itrNum; i++)
+     .      .   71:     {
+     .      .   72:         //hashVal = hash((inputElem + i)->key);
+     .      8   73:         SortedList_insert(header + hashVal, (inputElem + i));
+     .      .   74:     }
+     .      .   75: 
+     .      .   76:     if(printing) printf("LIST: starting length\n");
+     .      .   77:     for(i = 0; i < listNum; i++)
+     .      .   78:     {
+     .      .   79:         len += SortedList_length(header + i);
+     .      .   80:     }
+     .      .   81: 
+     .      .   82:     if(len < itrNum)
+     .      .   83:     {
+     .      .   84:         fprintf(stderr, "List improperly created. %d %d\n", len, itrNum);
+     .      .   85:         exit(2);
+     .      .   86:     }
+     .      .   87: 
+     .      .   88:     if(printing) printf("LIST: starting lookup and delete\n");
+     .      .   89:     SortedListElement_t* currElem;
+     .      .   90:     char* currKey = malloc(sizeof(char) * 256);
+     .      .   91:     for(i = 0; i < itrNum; i++)
+     .      .   92:     {
+     .      .   93:         //hashVal = hash((inputElem + i)->key);
+     .      .   94:         strcpy(currKey, (inputElem + i)->key);
+     .      .   95:         //counter++;
+     .      .   96:         if(i == 0 && printing) printf("LIST: lookup\n");
+     .      9   97:         currElem = SortedList_lookup(header + hashVal, currKey);
+     .      .   98:         //currElem = SortedList_lookup(header, (inputElem + i)->key);
+     .      .   99:         // if(counter > thrdNum * itrNum)
+     .      .  100:         // {
+     .      .  101:         //     fprintf(stderr, "Looped, could not find element.\n");
+     .      .  102:         //     exit(2);
+     .      .  103:         // }
+     .      .  104:         if(currElem == NULL)
+     .      .  105:         {
+     .      .  106:             fprintf(stderr, "Element not found.\n");
+     .      .  107:             exit(2);
+     .      .  108:         }
+     .      .  109:         if(i == 0 && printing) printf("LIST: delete\n");
+     .      1  110:         int val = SortedList_delete(currElem);
+     .      .  111:         if(val)
+     .      .  112:         {
+     .      .  113:             fprintf(stderr, "Failed to delete element.\n");
+     .      .  114:             exit(2);
+     .      .  115:         }
+     .      .  116:     }
+     .      .  117: 
+     .      .  118:     if(opt_sync == 'm')
+     .      .  119:         pthread_mutex_unlock(&mutexThrd);
+     .      .  120:     else if(opt_sync == 's')
+     .      .  121:         __sync_lock_release(&lock);
+     .      .  122: 
+     .      .  123:     return (void *) waitTime;
+     .      .  124: }
+---
+     .      .  125: 
+     .      .  126: int main(int argc, char* argv[])
+     .      .  127: {
+     .      .  128:     signal(SIGSEGV, segFaultHandler);
+     .      .  129:     char opt;
+ROUTINE ====================== listThreads in /u/cs/ugrad/dung/CS111/Lab2b/lab2_list.c
+   226    244 Total samples (flat / cumulative)
+     .      .   47: 
+     .      .   48:     return randNum % listNum;
+     .      .   49: }
+     .      .   50: 
+     .      .   51: void* listThreads(void* input)
+---
+     .      .   52: {
+     .      .   53:     long waitTime = 0;
+     .      .   54:     struct timespec waitStart, waitFinish;
+     .      .   55:     SortedListElement_t* inputElem = input;
+     .      .   56:     int hashVal = 0, len = 0;
+     .      .   57:     if(opt_sync == 'm')
+     .      .   58:     {
+     .      .   59:         clock_gettime(CLOCK_MONOTONIC, &waitStart);
+     .      .   60:         pthread_mutex_lock(&mutexThrd);
+     .      .   61:         clock_gettime(CLOCK_MONOTONIC, &waitFinish);
+     .      .   62:         waitTime += NANOSEC * (waitFinish.tv_sec - waitStart.tv_sec) + (waitFinish.tv_nsec - waitStart.tv_nsec);
+     .      .   63:     }
+     .      .   64:     else if(opt_sync == 's')
+   226    226   65:         while(__sync_lock_test_and_set(&lock, 1));
+     .      .   66: 
+     .      .   67:     int i;
+     .      .   68:     
+     .      .   69:     if(printing) printf("LIST: starting insert\n");
+     .      .   70:     for(i = 0; i < itrNum; i++)
+     .      .   71:     {
+     .      .   72:         //hashVal = hash((inputElem + i)->key);
+     .      8   73:         SortedList_insert(header + hashVal, (inputElem + i));
+     .      .   74:     }
+     .      .   75: 
+     .      .   76:     if(printing) printf("LIST: starting length\n");
+     .      .   77:     for(i = 0; i < listNum; i++)
+     .      .   78:     {
+     .      .   79:         len += SortedList_length(header + i);
+     .      .   80:     }
+     .      .   81: 
+     .      .   82:     if(len < itrNum)
+     .      .   83:     {
+     .      .   84:         fprintf(stderr, "List improperly created. %d %d\n", len, itrNum);
+     .      .   85:         exit(2);
+     .      .   86:     }
+     .      .   87: 
+     .      .   88:     if(printing) printf("LIST: starting lookup and delete\n");
+     .      .   89:     SortedListElement_t* currElem;
+     .      .   90:     char* currKey = malloc(sizeof(char) * 256);
+     .      .   91:     for(i = 0; i < itrNum; i++)
+     .      .   92:     {
+     .      .   93:         //hashVal = hash((inputElem + i)->key);
+     .      .   94:         strcpy(currKey, (inputElem + i)->key);
+     .      .   95:         //counter++;
+     .      .   96:         if(i == 0 && printing) printf("LIST: lookup\n");
+     .      9   97:         currElem = SortedList_lookup(header + hashVal, currKey);
+     .      .   98:         //currElem = SortedList_lookup(header, (inputElem + i)->key);
+     .      .   99:         // if(counter > thrdNum * itrNum)
+     .      .  100:         // {
+     .      .  101:         //     fprintf(stderr, "Looped, could not find element.\n");
+     .      .  102:         //     exit(2);
+     .      .  103:         // }
+     .      .  104:         if(currElem == NULL)
+     .      .  105:         {
+     .      .  106:             fprintf(stderr, "Element not found.\n");
+     .      .  107:             exit(2);
+     .      .  108:         }
+     .      .  109:         if(i == 0 && printing) printf("LIST: delete\n");
+     .      1  110:         int val = SortedList_delete(currElem);
+     .      .  111:         if(val)
+     .      .  112:         {
+     .      .  113:             fprintf(stderr, "Failed to delete element.\n");
+     .      .  114:             exit(2);
+     .      .  115:         }
+     .      .  116:     }
+     .      .  117: 
+     .      .  118:     if(opt_sync == 'm')
+     .      .  119:         pthread_mutex_unlock(&mutexThrd);
+     .      .  120:     else if(opt_sync == 's')
+     .      .  121:         __sync_lock_release(&lock);
+     .      .  122: 
+     .      .  123:     return (void *) waitTime;
+     .      .  124: }
+---
+     .      .  125: 
+     .      .  126: int main(int argc, char* argv[])
+     .      .  127: {
+     .      .  128:     signal(SIGSEGV, segFaultHandler);
+     .      .  129:     char opt;

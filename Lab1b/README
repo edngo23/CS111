@@ -1,0 +1,27 @@
+NAME: Ethan Ngo
+EMAIL: ethan.ngo2019@gmail.com
+ID: 205416130
+
+The included files are The included files are lab1b-client.c, lab1b-server.c, README, and Makefile.
+
+lab1b-client.c:
+This is the source file that contains the code for the client.
+
+lab1b-server.c:
+This is the source file that contains the code for the client.
+
+README:
+This file and its contents.
+
+Makefile:
+This Makefile supports differnt targets: default, client, server, clean, and dist. Default creates an 
+executable for both client and server. Client creates an executable for just client. Server creates an 
+executable for just server. Clean removes all unnecessary files and returns the current directory to 
+the freshly untared state. Dist is the command to create the tarball for submission and distribution.
+
+Misc:
+I failed to finish. It was extremely difficult and I struggled to understand what my output should be.
+I also had major difficulties with VSCode and the linux server. For some reason, random .nfs files were
+created when running and I couldn't delete them. Eventually, I ran out of disk space on the server, and
+my files were corrupted and I had to restart. I had more to say but my brain is fried from redoing my
+entire project.

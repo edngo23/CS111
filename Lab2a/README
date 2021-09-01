@@ -1,0 +1,101 @@
+NAME: Ethan Ngo
+EMAIL: ethan.ngo2019@gmail.com
+ID: 205416130
+
+The included files are lab2_add.c, lab2_list.c, SortedList.c, SortedList.h, Makefile, README, 
+lab2_add-1.png, lab2_add-2.png, lab2_add-3.png, lab2_add-4.png, lab2_add-5.png, lab2_list-1.png, 
+lab2_list-2.png, lab2_list-3.png, lab2_list-4.png, lab2_add.csv, lab2_list.csv, lab2_add.gp,
+and lab2_list.gp.
+
+Files:
+lab2_add.c: A shared variable add function's source code
+lab2_list.c: A sorted, doubly-linked list threading source code
+SortedList.h: A header file provided by the project specs
+SortedList.c: Implementation of SortedList.h with extra funcitonality
+Makefile: to be detailed later
+README: to be detailed later
+(the following is directly taken from the project specs)
+lab2_add-1.png: threads and iterations required to generate a failure (with and without yields)
+lab2_add-2.png: average time per operation with and without yields.
+lab2_add-3.png: average time per (single threaded) operation vs. the number of iterations.
+lab2_add-4.png: threads and iterations that can run successfully with yields under each of the 
+synchronization options.
+lab2_add-5.png: average time per (protected) operation vs. the number of threads.
+lab2_list-1.png: average time per (single threaded) unprotected operation vs. number of iterations 
+(illustrating the correction of the per-operation cost for the list length).
+lab2_list-2.png: threads and iterations required to generate a failure (with and without yields).
+lab2_list-3.png: iterations that can run (protected) without failure.
+lab2_list-4.png: (length-adjusted) cost per operation vs the number of threads for the various 
+synchronization options.
+lab2_add.csv: containing all of your results for all of the Part-1 tests.
+lab2_list.csv: containing all of your results for all of the Part-2 tests.
+lab2_add.gp: data reduction script provided in the specs
+lab2_list.gp: data reduction script provided in the specs
+
+
+README:
+This file and its contents.
+
+Makefile:
+This Makefile supports differnt targets: default, tests, graphs, clean, and dist. Default creates an 
+executable for both add and list. Tests runs build and a large amount of commands to test the add and 
+list programs, the output to be used in graphs. Graphs runs two commands, that uses the csv output of 
+tests and graphs the results using gnuplot. Clean removes all unnecessary files and returns the current 
+directory to the freshly untared state. Dist is the command to create the tarball for submission and 
+distribution.
+
+Questions:
+    Q2.1.1:
+    It takes so many iteratiosn before errors are seen because the less iterations there are, the less
+    likely it is for a process with multiple threads to do "improper" operations on a shared variable.
+    Having a smaller number of iterations makes it more difficult for these overlapping operations to 
+    occur, because if the number of iterations is small enough, it may be able to complete its 
+    operations within its given time slice, avoiding race conditions, which occurs with larger 
+    iterations.
+
+    Q2.1.2:
+    Yield runs are so much slower because threads are constantly giving up its time slice to let other 
+    threads run. The additional time is going to the switching between time slices and the "sleep" time
+    caused by it. No, we can't get per-operation timings using the yield option, because, the 
+    timing is not solely the time it takes to execute the operation, but factors in the wait/thread-
+    switching time. So the yield option makes it that we can't tell how long the operation itself takes.
+
+    Q2.1.3:
+    The average cost per operation drops with increasing iterations because the overhead has less impact
+    as the number of iterations goes up. A smaller number of iterations will have a larger average cost
+    per iteration because the overhead factors in more heavily. The graph shows that the average cost
+    decreases exponentially, so if the number of iterations approaches infinity, we will get the 
+    "correct" cost, as the overhead will be such a miniscule portion of the overall time.
+
+    Q2.1.4:
+    All of the options perform similarly for low number of threads because the overhead is very similar
+    between all of the options, and there is little chance for "optimization" and prevention of race
+    conditions with a low number of threads. The protected operations slow down with more threads because
+    the more threads there are, the more opportunity for race conditions, so the operations do more 
+    "work" in preventing this from happening, causing the cost per operation to go up, hence slowing
+    down the operation.
+
+    Q2.2.1:
+    In part 1, an increase in threads caused an increase in the cost of operations with mutex protection.
+    However, in part 2, the cost was not affected by an increase in threads.
+
+    Q2.2.2:
+    Spin locks, in both add and list, is generally cheaper than mutex for a smaller number of threads.
+    However, as the number of threads gets bigger, the cost of mutex is much less affected, and has 
+    a much lower slope than that of spin locks. This is likely because with spin locks, they would
+    be spending more time spinning with more threads, while mutex is much less time-consuming and the
+    lock is checked, and left alone if locked, rather than the CPU wasting time with it.
+
+Misc:
+This lab was interesting, and at most points in the lab, I had clear directions of what to do. However,
+I often struggled with figuring out where errors were coming from with the sanity check. @456 on piazza
+was able to clear up some of the confusion, however. 
+
+https://attractivechaos.wordpress.com/2011/10/06/multi-threaded-programming-efficiency-of-locking/
+    - Spin lock example
+https://simple.wikipedia.org/wiki/ASCII
+    - ASCII table
+https://stackoverflow.com/questions/308695/how-do-i-concatenate-const-literal-strings-in-c
+    - string concatenation
+https://stackoverflow.com/questions/21260735/how-to-invoke-function-from-external-c-file-in-c
+    - external function
